@@ -1,0 +1,8 @@
+resource_group_name     = "rg-access-control-prod"
+location                = "East US"
+app_service_plan_name   = "access-control-plan-prod"
+app_service_plan_tier   = "Basic"
+app_service_plan_size   = "B1"
+app_service_name        = "access-control-api-prod"
+dotnet_version          = "v7.0"
+environment             = "Production"

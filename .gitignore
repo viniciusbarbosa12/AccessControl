@@ -1,0 +1,35 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET
+appsettings.Development.json
+appsettings.Production.json
+appsettings.*.json
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Test Results
+TestResults/
+
+# Logs
+*.log
+
+# Others
+.env
+*.db
+*.DS_Store
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log

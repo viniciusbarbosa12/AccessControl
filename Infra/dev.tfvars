@@ -1,0 +1,8 @@
+resource_group_name     = "rg-access-control-dev"
+location                = "East US"
+app_service_plan_name   = "access-control-plan-dev"
+app_service_plan_tier   = "Free"
+app_service_plan_size   = "F1"
+app_service_name        = "access-control-api-dev"
+dotnet_version          = "v7.0"
+environment             = "Development"
