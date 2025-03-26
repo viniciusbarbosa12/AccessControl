@@ -74,7 +74,7 @@ namespace Tests.Services
                 Number = cardNumber,
                 FirstName = "John",
                 LastName = "Doe",
-                DoorsNumbersWithAccess = new List<int>()
+                AccessibleDoorNumbers = new List<int>()
             };
 
             _mockRepository
@@ -90,7 +90,7 @@ namespace Tests.Services
 
             // Assert
             Assert.Equal("Success", result);
-            Assert.Contains(doorNumber, card.DoorsNumbersWithAccess);
+            Assert.Contains(doorNumber, card.AccessibleDoorNumbers);
             _mockRepository.Verify(r => r.Update(card), Times.Once);
             _mockRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
         }

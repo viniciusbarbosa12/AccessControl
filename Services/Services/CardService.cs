@@ -61,7 +61,7 @@ namespace Services.Services
                     return "Failure";
                 }
 
-                card.DoorsNumbersWithAccess.Add(doorNumber);
+                card.AccessibleDoorNumbers.Add(doorNumber);
                 _cardRepository.Update(card);
                 card.MarkAsUpdated();
                 await _cardRepository.SaveChangesAsync();
@@ -89,13 +89,13 @@ namespace Services.Services
                     return false;
                 }
 
-                if (!card.DoorsNumbersWithAccess.Contains(doorNumber))
+                if (!card.AccessibleDoorNumbers.Contains(doorNumber))
                 {
                     _logger.LogWarning($"Card {cardNumber} does not have access to door {doorNumber}");
                     return false;
                 }
 
-                card.DoorsNumbersWithAccess.Remove(doorNumber);
+                card.AccessibleDoorNumbers.Remove(doorNumber);
                 _cardRepository.Update(card);
                 await _cardRepository.SaveChangesAsync();
 

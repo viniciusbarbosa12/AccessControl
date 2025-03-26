@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,10 +21,10 @@ namespace AccessControl.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize(Policy = "IsAdmin")]
-        public async Task<IActionResult> CreateDoor([FromQuery] int doorNumber, [FromQuery] int doorType, [FromQuery] string doorName)
+        [Authorize(Policy = "OnlyCompanyEmail")]
+        public async Task<IActionResult> CreateDoor([FromBody] CreateDoorModel model)
         {
-            if (doorNumber <= 0 || doorType < 0 || string.IsNullOrWhiteSpace(doorName))
+            if (model.DoorNumber <= 0 || model.DoorType < 0 || string.IsNullOrWhiteSpace(model.DoorName))
             {
                 _logger.LogWarning("Invalid input for door creation.");
                 return BadRequest("All parameters are required and must be valid.");
@@ -31,7 +32,7 @@ namespace AccessControl.Controllers
 
             try
             {
-                var result = await _doorService.AddDoor(doorNumber, doorType, doorName);
+                var result = await _doorService.AddDoor(model.DoorNumber, model.DoorType, model.DoorName);
                 _logger.LogInformation("Door created successfully. DoorCode: {DoorCode}", result.Code);
                 return Ok(result);
             }
@@ -46,6 +47,7 @@ namespace AccessControl.Controllers
                 return StatusCode(500, "An unexpected error occurred while creating the door.");
             }
         }
+
 
         [HttpDelete("remove")]
         [Authorize(Policy = "IsAdmin")]

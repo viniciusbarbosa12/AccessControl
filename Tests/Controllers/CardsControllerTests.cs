@@ -1,11 +1,8 @@
 ﻿using AccessControl.Tests.Utils;
-using Domain.Models;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace AccessControl.Tests.Controllers
 {
@@ -18,14 +15,21 @@ namespace AccessControl.Tests.Controllers
             _client = factory.CreateClient();
         }
 
+
         [Fact]
         public async Task Create_ShouldReturn200_WhenValidCard()
         {
             var token = await JwtHelper.GetAdminTokenAsync(_client);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _client.PostAsync(
-                "/api/cards/create?cardNumber=999&firstName=Test&lastName=User", null);
+            var payload = new
+            {
+                CardNumber = 999,
+                FirstName = "Test",
+                LastName = "User"
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/cards/create", payload);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -33,14 +37,21 @@ namespace AccessControl.Tests.Controllers
             result.Should().Contain("Card999");
         }
 
+
         [Fact]
         public async Task Create_ShouldReturn400_WhenMissingFirstName()
         {
             var token = await JwtHelper.GetAdminTokenAsync(_client);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _client.PostAsync(
-                "/api/cards/create?cardNumber=1&lastName=User", null);
+            var payload = new
+            {
+                CardNumber = 999,
+                FirstName = "",
+                LastName = "User"
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/cards/create", payload);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }

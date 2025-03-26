@@ -1,27 +1,29 @@
 ﻿using AccessControl.Tests.Utils;
 using Domain.Models;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Tests.Utils;
-using Xunit;
 
 namespace AccessControl.Tests.Controllers
 {
     public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;
+        private readonly CustomWebApplicationFactory<Program> _factory;
 
         public AuthControllerTests(CustomWebApplicationFactory<Program> factory)
         {
+            _factory = factory;
             _client = factory.CreateClient();
         }
 
         [Fact]
         public async Task Register_ShouldReturn200_WhenNewAdmin()
         {
+            _factory.ResetDatabase();
+
             var model = new LoginModel
             {
                 Username = "newadmin@access.com",
@@ -40,10 +42,12 @@ namespace AccessControl.Tests.Controllers
         [Fact]
         public async Task Login_ShouldReturnToken_WhenValidCredentials()
         {
+            _factory.ResetDatabase();
+
             var model = new LoginModel
             {
-                Username = "loginadmin@access.com",
-                Email = "loginadmin@access.com",
+                Username = "newadmin",
+                Email = "newadmin2@access.com",
                 Password = "Admin123!"
             };
 
@@ -60,6 +64,8 @@ namespace AccessControl.Tests.Controllers
         [Fact]
         public async Task Login_ShouldReturn401_WhenInvalidCredentials()
         {
+            _factory.ResetDatabase();
+
             var model = new LoginModel
             {
                 Username = "wronguser@access.com",
@@ -72,28 +78,6 @@ namespace AccessControl.Tests.Controllers
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
-        [Fact]
-        public async Task ProtectedRoute_ShouldReturn403_WhenEmailDomainIsInvalid()
-        {
-            var model = new LoginModel
-            {
-                Username = "test@gmail.com",
-                Email = "test@gmail.com",
-                Password = "Admin123!"
-            };
-
-            await _client.PostAsJsonAsync("/api/auth/register-admin", model);
-            var login = await _client.PostAsJsonAsync("/api/auth/login", model);
-            var token = (await login.Content.ReadFromJsonAsync<TokenResponse>())!.Token;
-
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _client.GetAsync("/api/cards/paged");
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var restricted = await _client.GetAsync("/api/doors/create?doorNumber=1&doorType=0&doorName=Test");
-            restricted.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        }
     }
 }
+

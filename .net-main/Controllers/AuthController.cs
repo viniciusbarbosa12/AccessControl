@@ -43,8 +43,9 @@ namespace AccessControl.Controllers
         {
             _logger.LogInformation("[{Controller}] - Attempting login. Username = {Username}", nameof(AuthController), model.Username);
 
-            var token = await _authService.LoginAsync(model);
-            if (token == null)
+            string? token = await _authService.LoginAsync(model);
+
+            if (string.IsNullOrWhiteSpace(token))
             {
                 _logger.LogWarning("[{Controller}] - Invalid login attempt. Username = {Username}", nameof(AuthController), model.Username);
                 return Unauthorized();
@@ -72,6 +73,5 @@ namespace AccessControl.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
     }
 }

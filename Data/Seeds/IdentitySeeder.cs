@@ -3,34 +3,38 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AccessControl.Seeding
 {
-    public class IdentitySeeder
+    public static class IdentitySeeder
     {
         public static async Task SeedAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            const string adminEmail = "admin@access.com";
-            const string adminPassword = "Admin123!";
 
-            // Seed role
-            if (!await roleManager.RoleExistsAsync("Admin"))
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
+            var roleName = "Admin";
 
-            // Seed user
+            var exists = await roleManager.RoleExistsAsync(roleName);
+            if (!exists && !roleManager.Roles.Any(r => r.NormalizedName == roleName.ToUpper()))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+
+            var adminEmail = "admin@access.com";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
             if (adminUser == null)
             {
-                adminUser = new AppUser
+                var user = new AppUser
                 {
                     UserName = adminEmail,
-                    Email = adminEmail,
-                    EmailConfirmed = true,
-                    FirstName = "System",
-                    LastName = "Admin"
+                    Email = adminEmail
                 };
 
-                var result = await userManager.CreateAsync(adminUser, adminPassword);
+                var result = await userManager.CreateAsync(user, "Admin123!");
+
                 if (result.Succeeded)
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                {
+                    await userManager.AddToRoleAsync(user, roleName); 
+                }
             }
         }
     }
+
 }

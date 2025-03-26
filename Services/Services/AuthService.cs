@@ -32,10 +32,15 @@ namespace Services.Services
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                throw new Exception("Failed to create user");
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new Exception($"Failed to create user: {errors}");
+            }
 
             if (!await _roleManager.RoleExistsAsync("Admin"))
+            {
                 await _roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
 
             await _userManager.AddToRoleAsync(user, "Admin");
 
@@ -55,7 +60,7 @@ namespace Services.Services
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim(ClaimTypes.Email, user.Email!) 
+                new Claim(ClaimTypes.Email, user.Email ?? "")
             };
 
             var jwtSection = _configuration.GetSection("Jwt");
@@ -79,10 +84,12 @@ namespace Services.Services
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                throw new Exception("Failed to create user");
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new Exception($"Failed to create user: {errors}");
+            }
 
             return "User created successfully.";
         }
-
     }
 }

@@ -21,7 +21,7 @@ public class AccessMediator : IAccessMediator
             return;
         }
 
-        if (card.DoorsNumbersWithAccess.Contains(doorNumber))
+        if (card.AccessibleDoorNumbers.Contains(doorNumber))
         {
             Console.WriteLine($" Access granted. Opening door {doorNumber} ({door.Name})");
         }

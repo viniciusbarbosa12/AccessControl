@@ -22,6 +22,6 @@ namespace Domain.Entities
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
 
-        public List<int> DoorsNumbersWithAccess { get; set; } = new();
+        public List<int> AccessibleDoorNumbers { get; set; } = new(); 
     }
 }

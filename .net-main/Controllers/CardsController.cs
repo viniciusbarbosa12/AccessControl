@@ -1,4 +1,5 @@
 using Domain.Config;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Filters;
@@ -21,9 +22,9 @@ namespace AccessControl.Controllers
 
         [HttpPost("create")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromQuery] int cardNumber, [FromQuery] string firstName, [FromQuery] string lastName)
+        public async Task<IActionResult> Create([FromBody] CreateCardModel model)
         {
-            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+            if (string.IsNullOrWhiteSpace(model.FirstName) || string.IsNullOrWhiteSpace(model.LastName))
             {
                 _logger.LogWarning("First name or last name is missing.");
                 return BadRequest("First name and last name are required.");
@@ -31,7 +32,7 @@ namespace AccessControl.Controllers
 
             try
             {
-                var result = await _cardsService.AddCard(cardNumber, firstName, lastName);
+                var result = await _cardsService.AddCard(model.CardNumber, model.FirstName, model.LastName);
                 _logger.LogInformation("Card created successfully. CardId: {CardId}", result);
                 return Ok(result);
             }

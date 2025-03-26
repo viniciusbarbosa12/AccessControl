@@ -175,10 +175,18 @@ app.UseEndpoints(endpoints =>
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<AppDbContext>();
+    await dbContext.Database.EnsureDeletedAsync(); 
+    await dbContext.Database.EnsureCreatedAsync(); 
+
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     await IdentitySeeder.SeedAsync(userManager, roleManager);
 }
+
 #endregion
 
 app.Run();
+
+
+public partial class Program { }

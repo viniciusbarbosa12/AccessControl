@@ -17,6 +17,5 @@ namespace Domain.Entities
         [Required]
         public string Description { get; set; } = string.Empty;
 
-        public List<string> DoorsIdsWithAccess { get; set; } = new();
     }
 }

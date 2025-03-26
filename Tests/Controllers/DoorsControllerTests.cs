@@ -1,11 +1,9 @@
 ﻿using AccessControl.Tests.Utils;
 using Domain.Entities;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace AccessControl.Tests.Controllers
 {
@@ -17,14 +15,20 @@ namespace AccessControl.Tests.Controllers
         {
             _client = factory.CreateClient();
         }
-
         [Fact]
         public async Task CreateDoor_ShouldReturn200_WhenValid()
         {
             var token = await JwtHelper.GetAdminTokenAsync(_client);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _client.PostAsync("/api/doors/create?doorNumber=1&doorType=0&doorName=MainEntrance", null);
+            var payload = new
+            {
+                DoorNumber = 1,
+                DoorType = 0,
+                DoorName = "MainEntrance"
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/doors/create", payload);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -35,10 +39,18 @@ namespace AccessControl.Tests.Controllers
             var token = await JwtHelper.GetAdminTokenAsync(_client);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _client.PostAsync("/api/doors/create?doorNumber=0&doorType=-1&doorName=", null);
+            var payload = new
+            {
+                DoorNumber = 0,
+                DoorType = -1,
+                DoorName = ""
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/doors/create", payload);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+
 
         [Fact]
         public async Task DeleteDoor_ShouldReturn404_WhenDoorDoesNotExist()
