@@ -8,6 +8,7 @@ using Tests.Utils;
 
 namespace AccessControl.Tests.Controllers
 {
+    [Collection("Sequential")]
     public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;

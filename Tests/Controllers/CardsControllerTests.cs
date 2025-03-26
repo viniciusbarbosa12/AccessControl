@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 
 namespace AccessControl.Tests.Controllers
 {
+    [Collection("Sequential")]
     public class CardsControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;
